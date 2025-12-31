@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FocusForge — Productivity + Leveling</title>
+<style>
+  :root{
+    --bg1:#0a0a0b;
+    --bg2:#0d0f14;
+    --card:rgba(255,255,255,.06);
+    --cardBorder: rgba(255,255,255,.12);
+    --muted:#c9c9cf;
+    --text:#f3f3f5;
+    --accent:#4ade80;
+    --accent2:#2dd4bf;
+    --ring:#86efac;
+    --danger:#fda4af;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";color:var(--text);background:radial-gradient(1000px 600px at 50% -10%, #1a1f2a 0%, rgba(10,10,11,0) 60%), linear-gradient(#0b0b0c, #0e1116);}
+  a{color:inherit}
+  .container{max-width:900px;margin:0 auto;padding:24px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{position:relative;width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 0 1px #0006, 0 6px 32px #22c55e22 inset}
+  .logo svg{position:absolute;inset:0;margin:auto;display:block}
+  .title{font-size:clamp(22px,3vw,28px);font-weight:700;letter-spacing:.2px}
+  .chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(16,185,129,.15);color:#b7f7c9;border:1px solid rgba(16,185,129,.35);font-weight:600}
+  .card{background:var(--card);border:1px solid var(--cardBorder);border-radius:18px;padding:16px 16px;backdrop-filter: blur(6px)}
+  .muted{color:#c6c7cb}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .grow{flex:1 1 auto}
+  input, textarea, select, button{font:inherit;color:inherit}
+  .input, .textarea{background:#00000088;border:1px solid #ffffff1f;padding:12px 14px;border-radius:12px;outline:0;transition:.2s box-shadow,.2s border-color;width:100%}
+  .input:focus, .textarea:focus{border-color:#86efac66;box-shadow:0 0 0 3px #22c55e33}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 14px;border-radius:12px;border:0;background:var(--accent);color:#0a0a0a;font-weight:600;cursor:pointer;transition: transform .04s, filter .2s}
+  .btn:active{transform: translateY(1px)}
+  .btn.secondary{background:#ffffff1a;color:#e8e8ea;border:1px solid #ffffff2a}
+  .btn.danger{background:#f43f5e;color:white}
+  .stats{display:flex;gap:14px;align-items:center;color:#bac0c7;font-size:14px}
+  .dot{width:6px;height:6px;border-radius:999px;background:#80848c}
+  .bar{height:12px;background:#18181b;border-radius:999px;overflow:hidden;border:1px solid #ffffff17}
+  .bar>div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+  .filters{display:flex;gap:8px;align-items:center}
+  .pill{border-radius:999px;border:1px solid #ffffff26;background:#ffffff10;color:#e8e8ea;padding:6px 10px;font-size:14px;cursor:pointer;transition:.15s}
+  .pill.active{background:white;color:#0a0a0a;border-color:transparent}
+  ul.tasks{list-style:none;padding:0;margin:10px 0 120px;display:grid;gap:10px}
+  .task{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--cardBorder);border-radius:16px;background:rgba(255,255,255,.055)}
+  .check{width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid #ffffff28;background:#0b0c0d;cursor:pointer}
+  .check.done{background:var(--accent);color:#08110a;border-color:#34d399}
+  .xp{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;background:#ffffff10;border:1px solid #ffffff25;color:#b8f3e7;font-size:12px;font-weight:700}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .when{font-size:12px;color:#b8bcc4}
+  .actions{margin-left:auto;display:flex;gap:6px}
+  .toast{position:fixed;left:0;right:0;top:18px;display:flex;justify-content:center;z-index:50;pointer-events:none}
+  .toast>div{pointer-events:auto;border:1px solid #34d39988;background:#10b98122;color:#ccffe9;border-radius:14px;padding:10px 14px;box-shadow:0 10px 40px #0008}
+  .empty{margin-top:36px;text-align:center;color:#c7c9cf}
+  .footer{position:fixed;left:0;right:0;bottom:0;padding:14px 18px;background:linear-gradient(180deg, transparent, #050506 25%);}
+  canvas#stars{position:fixed;inset:0;z-index:-1;opacity:.25}
+  .kbd{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background:#ffffff1a;border:1px solid #ffffff2a;padding:2px 6px;border-radius:8px;font-size:12px}
+  .tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:#ffffff12;border:1px solid #ffffff22;color:#d6d6db;font-size:12px}
+  @media (max-width:640px){ .actions .label{display:none} }
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<div class="container">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M4 12h16M12 4v16" stroke="#0b0b0c" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="title">FocusForge</div>
+    </div>
+    <div class="muted">v1</div>
+  </div>
+
+  <div class="card" id="levelCard">
+    <div class="row" style="align-items:center;justify-content:space-between">
+      <div class="row" style="align-items:center">
+        <span class="chip" id="levelChip">Niveau 1</span>
+        <span class="tag" id="xpTotal">0 XP</span>
+      </div>
+      <div class="stats">
+        <span><strong id="statTotal">0</strong> Tâches</span>
+        <div class="dot"></div>
+        <span><strong id="statDone">0</strong> Terminées</span>
+        <div class="dot"></div>
+        <span><strong id="statActive">0</strong> Actives</span>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="row muted" style="font-size:13px;justify-content:space-between">
+        <span>Prochain niveau</span>
+        <span id="nextLabel">0/100 XP (0%)</span>
+      </div>
+      <div class="bar"><div id="progress" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="row">
+      <input class="input grow" id="taskTitle" placeholder="Ajouter une tâche..." />
+      <input class="input" id="taskDue" type="date" />
+      <input class="input" id="taskPoints" type="number" min="1" value="10" style="width:120px" />
+      <button class="btn" id="addBtn" title="Ajouter"><span>+</span><span class="label">Ajouter</span></button>
+    </div>
+    <textarea class="textarea" id="taskNotes" rows="2" placeholder="Notes (facultatif)" style="margin-top:10px"></textarea>
+  </div>
+
+  <div class="row" style="margin-top:10px">
+    <button class="pill active" data-filter="all">Toutes</button>
+    <button class="pill" data-filter="active">Actives</button>
+    <button class="pill" data-filter="done">Terminées</button>
+    <div style="margin-left:auto" class="row">
+      <button class="btn secondary" id="clearDone"><span class="label">Effacer terminées</span></button>
+      <button class="btn secondary" id="exportBtn" title="Télécharger vos données"><span class="label">Exporter</span></button>
+      <button class="btn danger" id="resetBtn" title="Tout effacer"><span class="label">Réinitialiser</span></button>
+    </div>
+  </div>
+
+  <ul class="tasks" id="taskList"></ul>
+
+  <div class="empty" id="emptyState" style="display:none">
+    <div style="display:grid;place-items:center;margin-bottom:8px">
+      <div class="logo" style="width:40px;height:40px;border-radius:12px"></div>
+    </div>
+    <div style="font-size:18px">Aucune tâche</div>
+    <div class="muted" style="font-size:14px">Ajoutez votre première tâche ci-dessus. Terminer des tâches rapporte de l'XP et vous fait monter de niveau.</div>
+    <div style="margin-top:10px" class="muted">Astuce : appuyez sur <span class="kbd">Entrée</span> pour ajouter.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast" style="display:none"><div>Level up! Vous êtes maintenant niveau <span id="toastLevel">2</span> 🎉</div></div>
+
+<div class="footer"></div>
+
+<script>
+const LS_TASKS = "ff_tasks_v1";
+const LS_XP = "ff_xp_v1";
+function loadJSON(key, fallback){ try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch(e){ return fallback; } }
+function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+let tasks = loadJSON(LS_TASKS, []);
+let xp = Number(localStorage.getItem(LS_XP) || 0);
+function levelFromXp(x){ let lvl=1,remain=x,need=100; while(remain>=need){ remain-=need; lvl+=1; need=100+(lvl-1)*50; } const pct=Math.max(0,Math.min(100,Math.floor((remain/need)*100))); return {level:lvl,progressXp:remain,nextLevelXp:need,percent:pct}; }
+let filter="all"; let lastLevel=levelFromXp(xp).level;
+const els={ title:taskTitle, due:taskDue, points:taskPoints, notes:taskNotes, addBtn:addBtn, list:taskList, empty:emptyState, levelChip:levelChip, xpTotal:xpTotal, nextLabel:nextLabel, progress:progress, statTotal:statTotal, statDone:statDone, statActive:statActive, toast:toast, toastLevel:toastLevel, clearDone:clearDone, resetBtn:resetBtn, exportBtn:exportBtn };
+function render(){ const L=levelFromXp(xp); els.levelChip.textContent="Niveau "+L.level; els.xpTotal.textContent=xp+" XP"; els.nextLabel.textContent=L.progressXp+"/"+L.nextLevelXp+" XP ("+L.percent+"%)"; els.progress.style.width=L.percent+"%"; const total=tasks.length; const done=tasks.filter(t=>t.done).length; els.statTotal.textContent=total; els.statDone.textContent=done; els.statActive.textContent=total-done; const filtered=tasks.filter(t=>(filter==="all" || (filter==="active"&&!t.done) || (filter==="done"&&t.done))); els.list.innerHTML=""; if(filtered.length===0){ els.empty.style.display="block"; } else { els.empty.style.display="none"; filtered.sort((a,b)=>{ if(!a.done && b.done) return -1; if(a.done && !b.done) return 1; if(!a.done && !b.done){ const da=a.due?new Date(a.due).getTime():Infinity; const db=b.due?new Date(b.due).getTime():Infinity; if(da!==db) return da-db; return b.createdAt-a.createdAt; } return b.createdAt-a.createdAt; }); for(const t of filtered){ els.list.appendChild(renderTask(t)); } } }
+function renderTask(t){ const li=document.createElement("li"); li.className="task"; const btn=document.createElement("button"); btn.className="check"+(t.done?" done":""); btn.innerHTML=t.done?svgCheck():svgDot(); btn.title=t.done?"Marquer non terminée":"Terminer"; btn.onclick=()=>toggleDone(t.id); const main=document.createElement("div"); main.style.flex="1 1 auto"; const title=document.createElement("div"); title.style.display="flex"; title.style.alignItems="center"; title.style.flexWrap="wrap"; title.style.gap="8px"; const p=document.createElement("p"); p.textContent=t.title; p.style.margin="0"; p.style.fontSize="16px"; if(t.done){ p.style.textDecoration="line-through"; p.style.color="#9aa0a6"; } title.appendChild(p); const xpTag=document.createElement("span"); xpTag.className="xp"; xpTag.textContent=t.points+" XP"; title.appendChild(xpTag); if(t.due){ const due=document.createElement("span"); due.className="tag"; due.textContent="Échéance "+prettyDate(t.due); title.appendChild(due); } main.appendChild(title); if(t.notes){ const notes=document.createElement("div"); notes.className="muted"; notes.style.marginTop="4px"; notes.style.fontSize="14px"; notes.textContent=t.notes; main.appendChild(notes); } const meta=document.createElement("div"); meta.className="meta"; meta.style.marginTop="8px"; const when=document.createElement("span"); when.className="when"; when.textContent="Ajoutée le "+new Date(t.createdAt).toLocaleString(); meta.appendChild(when); main.appendChild(meta); const actions=document.createElement("div"); actions.className="actions"; const editBtn=document.createElement("button"); editBtn.className="btn secondary"; editBtn.innerHTML=svgEdit()+"<span class='label'>Modifier</span>"; editBtn.onclick=()=>startEdit(t.id); const delBtn=document.createElement("button"); delBtn.className="btn secondary"; delBtn.style.color="#fecaca"; delBtn.innerHTML=svgTrash()+"<span class='label'>Supprimer</span>"; delBtn.onclick=()=>removeTask(t.id); actions.append(editBtn, delBtn); li.append(btn, main, actions); return li; }
+function prettyDate(s){ try{ return new Date(s+"T00:00:00").toLocaleDateString(); } catch(e){ return s; } }
+function addTask(){ const title=els.title.value.trim(); const points=Math.max(1, Number(els.points.value || 10)); const notes=els.notes.value.trim(); const due=els.due.value; if(!title) return; const t={ id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()), title, notes, due, points, done:false, createdAt: Date.now() }; tasks=[t, ...tasks]; saveJSON(LS_TASKS, tasks); els.title.value=""; els.notes.value=""; els.due.value=""; els.points.value=10; render(); }
+function toggleDone(id){ const index=tasks.findIndex(t=>t.id===id); if(index===-1) return; const t=tasks[index]; const wasDone=t.done; t.done=!t.done; tasks[index]=t; if(wasDone){ xp=Math.max(0, xp - t.points); } else { xp += t.points; } localStorage.setItem(LS_XP, String(xp)); saveJSON(LS_TASKS, tasks); const L=levelFromXp(xp); if(L.level>lastLevel){ lastLevel=L.level; showToast("Level up! Vous êtes maintenant niveau "+L.level+" 🎉"); } else if(L.level < lastLevel){ lastLevel=L.level; } render(); }
+function showToast(msg){ els.toast.style.display="flex"; els.toast.firstElementChild.firstChild.textContent=msg; setTimeout(()=> els.toast.style.display="none", 1600); }
+function removeTask(id){ tasks=tasks.filter(t=>t.id!==id); saveJSON(LS_TASKS, tasks); render(); }
+function startEdit(id){ const t=tasks.find(t=>t.id===id); if(!t) return; const title=prompt("Modifier le titre", t.title); if(title===null) return; const points=Number(prompt("Points", t.points)) || t.points; const due=prompt("Échéance (YYYY-MM-DD)", t.due || "") || ""; const notes=prompt("Notes", t.notes || "") || ""; t.title = title.trim() || t.title; t.points = Math.max(1, points); t.due = due; t.notes = notes.trim(); saveJSON(LS_TASKS, tasks); render(); }
+function clearCompleted(){ tasks=tasks.filter(t=>!t.done); saveJSON(LS_TASKS, tasks); render(); }
+function resetAll(){ if(!confirm("Tout effacer (tâches + XP) ?")) return; tasks=[]; xp=0; lastLevel=1; saveJSON(LS_TASKS, tasks); localStorage.setItem(LS_XP, "0"); render(); }
+function exportData(){ const data={ tasks, xp, exportedAt:new Date().toISOString() }; const blob=new Blob([JSON.stringify(data,null,2)], {type:"application/json"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="focusforge-data.json"; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 100); }
+addBtn.addEventListener("click", addTask); taskTitle.addEventListener("keydown", (e)=>{ if(e.key==="Enter") addTask(); });
+document.querySelectorAll(".pill").forEach(btn=>{ btn.addEventListener("click", ()=>{ filter=btn.dataset.filter; document.querySelectorAll(".pill").forEach(b=>b.classList.toggle("active", b===btn)); render(); }); });
+clearDone.addEventListener("click", clearCompleted);
+resetBtn.addEventListener("click", resetAll);
+exportBtn.addEventListener("click", exportData);
+// Starfield
+(function(){ const cvs=document.getElementById("stars"); const ctx=cvs.getContext("2d"); function resize(){ cvs.width=innerWidth; cvs.height=innerHeight; } addEventListener("resize", resize); resize(); const stars=Array.from({length:120}, ()=>({ x:Math.random()*cvs.width, y:Math.random()*cvs.height, r:Math.random()*1.2+0.3, s:Math.random()*0.6+0.2 })); function step(){ ctx.clearRect(0,0,cvs.width,cvs.height); const t=Date.now()/1000; for(const st of stars){ ctx.globalAlpha = 0.5 + Math.sin(t*st.s + st.x)*0.3; ctx.fillStyle="#fff"; ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI*2); ctx.fill(); } requestAnimationFrame(step); } step(); })();
+function svgCheck(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#0b0b0c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+function svgDot(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="#e5e7eb"><circle cx="12" cy="12" r="3"/></svg>'; }
+function svgEdit(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 20l4.5-1 9-9-3.5-3.5-9 9L4 20z" stroke="#d8dde4" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 6l3.5 3.5" stroke="#d8dde4" stroke-width="1.7" stroke-linecap="round"/></svg>'; }
+function svgTrash(){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M9 6V4h6v2M8 6l1 14h6l1-14" stroke="#fecaca" stroke-width="1.7" stroke-linecap="round"/></svg>'; }
+render();
+</script>
+</body>
+</html>
